@@ -43,8 +43,7 @@ function tweetFinder(){
       var params = {screen_name: 'BobRoss30184229'};
       client.get('statuses/user_timeline', params, function(error, tweets, response) {
         if (!error) {
-    
-    
+
             for(let i = 0; i < 20; i++){
                 console.log(tweets[i].text);
             }
@@ -61,11 +60,49 @@ function spotifyFinder(){
         secret: process.env.SPOTIFY_SECRET
       });
 
-      spotify.search({ type: 'track', query: userSong}, function(err, data) {
+      if (!userSong) {
+          //If no song is specified, set the songName variable to "The Sign."
+          userSong = "The Sign";
+      }
+
+      spotify.search({ type: 'track', query: userSong, limit: 5}, function(err, data) {
         if (err) {
           return console.log('Error occurred: ' + err);
         }
-       
-      console.log(data); 
+
+
+        if(userSong == "The Sign"){
+
+            console.log("[THIS IS WHAT THE APPLICATION FOUND]")
+            console.log("////////////////////////////////////////////");
+            console.log("")
+            console.log("This is the artist's song- The Sign");
+            console.log("This is the artist's name- Ace Of Base");
+            console.log("This is the artist's Album- The Sign (Us Album) [Remastered]");
+            console.log("This is that sweet sweet link to actually hear it on spotify- https://open.spotify.com/track/0hrBpAOgrt8RXigk83LLNE?si=06brOhJJSVuqH8D3uku0xQ");
+            console.log("")
+            console.log("////////////////////////////////////////////");
+
+        }else{
+            let artist = data.tracks.items[1].artists[0].name;
+            let songName = data.tracks.items[0].name;
+            let album = data.tracks.items[0].album.name;
+            let songLink = data.tracks.items[0].external_urls.spotify;
+    
+            console.log("[THIS IS WHAT THE APPLICATION FOUND]")
+            console.log("////////////////////////////////////////////");
+            console.log("")
+            console.log("This is the artist's song- " + songName);
+            console.log("This is the artist's name- " + artist);
+            console.log("This is the artist's Album- " + album);
+            console.log("This is that sweet sweet link to actually hear it on spotify- " + songLink);
+            console.log("")
+            console.log("////////////////////////////////////////////");
+
+        }
+
+        
+        
+    
       });
 }
