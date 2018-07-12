@@ -3,9 +3,9 @@ require("dotenv").config();
 
 //All of my variables
 const Twitter = require('twitter');
-var Spotify = require('node-spotify-api');
 const keys = require("./keys.js");
-let fs = require("fs");
+var Spotify = require('node-spotify-api');
+var fs = require("fs");
 var request = require("request");
 
 const userInput = process.argv;
@@ -22,24 +22,24 @@ let userMovie = '';
 inputDecider(userInputCommand);
 
 //Takes the user input and does something with it. (user input is grabbed from the process.argv[2])
-function inputDecider(userInputCommand){
-switch (userInputCommand) {
-    case 'my-tweets':
-        tweetFinder();
-        break;
-    case "spotify-this-song":
-        userSong = userInput[3];
-        spotifyFinder(userSong);
-        break;
-    case "movie-this":
-        userMovie = userInput[3];
-        movieFinder(userMovie);
-        break;
-    case "do-what-it-says" :
-        doWhatItSaysFunction();
-        break;
+function inputDecider(userInputCommand) {
+    switch (userInputCommand) {
+        case 'my-tweets':
+            tweetFinder();
+            break;
+        case "spotify-this-song":
+            userSong = userInput[3];
+            spotifyFinder(userSong);
+            break;
+        case "movie-this":
+            userMovie = userInput[3];
+            movieFinder(userMovie);
+            break;
+        case "do-what-it-says":
+            doWhatItSaysFunction();
+            break;
 
-}
+    }
 }
 
 
@@ -113,10 +113,6 @@ function spotifyFinder(userSong) {
             console.log("////////////////////////////////////////////");
 
         }
-
-
-
-
     });
 }
 
@@ -159,5 +155,28 @@ function movieFinder(userMovie) {
 
         }
     });
+
+}
+
+function doWhatItSaysFunction() {
+
+    fs.readFile("random.txt", "utf8", function (error, data) {
+
+        // If the code experiences any errors it will log the error to the console.
+        if (error) {
+            return console.log(error);
+        }
+
+        var dataArr = data.split(",");
+
+        let txtInformation = dataArr;
+
+        console.log("[THE RANDON.TXT FILE FOUND THE COMMAND, 'I WANT IT THAT WAY']");
+
+        spotifyFinder(txtInformation[1])
+
+
+    });
+
 
 }
