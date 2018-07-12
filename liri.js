@@ -6,10 +6,12 @@ const Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 const keys = require("./keys.js");
 let fs = require("fs");
+var request = require("request");
 
 const userInput = process.argv;
 const userInputCommand = userInput[2];
-let userSong = userInput[3];
+let userSong = '';
+let userMovie = '';
 
 
 
@@ -17,63 +19,74 @@ let userSong = userInput[3];
 //Start of the program as a whole/////////////////////////////////////////////////////////////////////////////////////////
 
 
-inputDecider();
+inputDecider(userInputCommand);
 
 //Takes the user input and does something with it. (user input is grabbed from the process.argv[2])
-function inputDecider(){
-    if(userInputCommand == 'my-tweets'){
+function inputDecider(userInputCommand){
+switch (userInputCommand) {
+    case 'my-tweets':
         tweetFinder();
-    }
-    if(userInputCommand == "spotify-this-song"){
-        spotifyFinder();
-    }
-    
+        break;
+    case "spotify-this-song":
+        userSong = userInput[3];
+        spotifyFinder(userSong);
+        break;
+    case "movie-this":
+        userMovie = userInput[3];
+        movieFinder(userMovie);
+        break;
+    case "do-what-it-says" :
+        doWhatItSaysFunction();
+        break;
+
+}
 }
 
 
 //Function that handles my twitter NPM package functionality
-function tweetFinder(){
+function tweetFinder() {
     var client = new Twitter({
         consumer_key: keys.twitter.consumer_key,
         consumer_secret: keys.twitter.consumer_secret,
         access_token_key: keys.twitter.access_token_key,
         access_token_secret: keys.twitter.access_token_secret
-      });
-       
-      var params = {screen_name: 'BobRoss30184229'};
-      client.get('statuses/user_timeline', params, function(error, tweets, response) {
+    });
+
+    var params = { screen_name: 'BobRoss30184229' };
+    client.get('statuses/user_timeline', params, function (error, tweets, response) {
         if (!error) {
 
-            for(let i = 0; i < 20; i++){
+            for (let i = 0; i < 20; i++) {
                 console.log(tweets[i].text);
             }
         }
-      });
-    
+    });
+
 }
 
 //Function that handles my spotify NPM package functionality
 
-function spotifyFinder(){
+function spotifyFinder(userSong) {
     var spotify = new Spotify({
         id: process.env.SPOTIFY_ID,
         secret: process.env.SPOTIFY_SECRET
-      });
+    });
 
-      if (!userSong) {
-          //If no song is specified, set the songName variable to "The Sign."
-          userSong = "The Sign";
-      }
+    if (!userSong) {
+        //If no song is specified, set the songName variable to "The Sign."
+        userSong = "The Sign";
+        console.log("[BECAUSE A SONG WAS NOT PICKED, THE NODE OVERLORDS PICKED A SONG FOR YOU]")
+    }
 
-      spotify.search({ type: 'track', query: userSong, limit: 5}, function(err, data) {
+    spotify.search({ type: 'track', query: userSong, limit: 5 }, function (err, data) {
         if (err) {
-          return console.log('Error occurred: ' + err);
+            return console.log('Error occurred: ' + err);
         }
 
 
-        if(userSong == "The Sign"){
+        if (userSong == "The Sign") {
 
-            console.log("[THIS IS WHAT THE APPLICATION FOUND]")
+            console.log("[THIS IS WHAT THE APPLICATION FOUND*]")
             console.log("////////////////////////////////////////////");
             console.log("")
             console.log("This is the artist's song- The Sign");
@@ -83,12 +96,12 @@ function spotifyFinder(){
             console.log("")
             console.log("////////////////////////////////////////////");
 
-        }else{
+        } else {
             let artist = data.tracks.items[1].artists[0].name;
             let songName = data.tracks.items[0].name;
             let album = data.tracks.items[0].album.name;
             let songLink = data.tracks.items[0].external_urls.spotify;
-    
+
             console.log("[THIS IS WHAT THE APPLICATION FOUND]")
             console.log("////////////////////////////////////////////");
             console.log("")
@@ -101,8 +114,50 @@ function spotifyFinder(){
 
         }
 
-        
-        
-    
-      });
+
+
+
+    });
+}
+
+
+function movieFinder(userMovie) {
+
+    if (!userMovie) {
+
+        userMovie = "Mr. Nobody"
+        console.log("[BECAUSE A MOVIE WAS NOT PICKED, THE NODE OVERLORDS PICKED A MOVIE FOR YOU]")
+
+    }
+
+    request("http://www.omdbapi.com/?t=" + userMovie + "&y=&plot=short&apikey=trilogy", function (error, response, body) {
+
+        if (!error && response.statusCode === 200) {
+
+            let movieName = JSON.parse(body).Title;
+            let movieYear = JSON.parse(body).Released;
+            let movieRating = JSON.parse(body).imdbRating;
+            let movieTomatoesRating = JSON.parse(body).Ratings[1];
+            let movieCountry = JSON.parse(body).Country;
+            let movieLanguage = JSON.parse(body).Language;
+            let moviePlot = JSON.parse(body).Plot;
+            let movieActors = JSON.parse(body).Actors;
+
+            console.log("[THIS IS WHAT THE APPLICATION FOUND]")
+            console.log("////////////////////////////////////////////");
+            console.log("")
+            console.log("This is the title of the movie - " + movieName);
+            console.log("This is the year the movie came out - " + movieYear);
+            console.log("This is the IMDB Rating of the movie - " + movieRating);
+            console.log("This is the rotten tomatoes rating of the movie - " + movieTomatoesRating);
+            console.log("This is the country where the movie was produced - " + movieCountry);
+            console.log("This is the language of the movie - " + movieLanguage);
+            console.log("This is the plot of the movie - " + moviePlot);
+            console.log("These are the actors in the movie - " + movieActors);
+            console.log("")
+            console.log("////////////////////////////////////////////");
+
+        }
+    });
+
 }
