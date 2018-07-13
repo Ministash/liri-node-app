@@ -184,7 +184,7 @@ function doWhatItSaysFunction() {
 
 function logThing(userInput){
 
-    fs.writeFile("log.txt", userInput, function(err) {
+    fs.appendFile("log.txt", userInput, function(err) {
 
         // If the code experiences any errors it will log the error to the console.
         if (err) {
@@ -192,7 +192,8 @@ function logThing(userInput){
         }
       
         // Otherwise, it will print: "movies.txt was updated!"
-        console.log("The Log Was Updated");
+        console.log("[THE LOG WAS UPDATED]");
+        console.log("")
       
       });
 }
