@@ -20,6 +20,7 @@ let userMovie = '';
 
 
 inputDecider(userInputCommand);
+logThing(userInput);
 
 //Takes the user input and does something with it. (user input is grabbed from the process.argv[2])
 function inputDecider(userInputCommand) {
@@ -179,4 +180,19 @@ function doWhatItSaysFunction() {
     });
 
 
+}
+
+function logThing(userInput){
+
+    fs.writeFile("log.txt", userInput, function(err) {
+
+        // If the code experiences any errors it will log the error to the console.
+        if (err) {
+          return console.log(err);
+        }
+      
+        // Otherwise, it will print: "movies.txt was updated!"
+        console.log("The Log Was Updated");
+      
+      });
 }
