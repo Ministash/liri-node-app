@@ -46,6 +46,7 @@ function inputDecider(userInputCommand) {
 
 //Function that handles my twitter NPM package functionality
 function tweetFinder() {
+    console.log("[THIS IS WHAT THE APPLICATION FOUND]")
     var client = new Twitter({
         consumer_key: keys.twitter.consumer_key,
         consumer_secret: keys.twitter.consumer_secret,
@@ -59,6 +60,10 @@ function tweetFinder() {
 
             for (let i = 0; i < 20; i++) {
                 console.log(tweets[i].text);
+                console.log(tweets[i].created_at);
+                console.log("")
+                console.log("////////////////////////////////////////////");
+                console.log("")
             }
         }
     });
